@@ -1,6 +1,7 @@
-package sia.tacocloud;
+package sia.tacocloud.entity;
 
 import lombok.Data;
+
 import java.util.List;
 
 @Data
