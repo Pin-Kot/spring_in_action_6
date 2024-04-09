@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@Slf4j
+//@Slf4j
 @Controller
 @RequestMapping("/design")
 @SessionAttributes("tacoOrder")

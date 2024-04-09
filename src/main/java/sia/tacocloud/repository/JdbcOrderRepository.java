@@ -1,6 +1,7 @@
 package sia.tacocloud.repository;
 
 import aj.org.objectweb.asm.Type;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
@@ -109,6 +110,52 @@ public class JdbcOrderRepository implements OrderRepository {
 
     @Override
     public Optional<TacoOrder> findById(Long id) {
-        return Optional.empty();
+        try {
+            TacoOrder order = jdbcOperations.queryForObject(
+                    "select id, delivery_name, delivery_street, delivery_city, "
+                            + "delivery_state, delivery_zip, cc_number, cc_expiration, "
+                            + "cc_cvv, placed_at from Taco_Order where id=?",
+                    (rs, rowNum) -> {
+                        TacoOrder tacoOrder = new TacoOrder();
+                        tacoOrder.setId(rs.getLong("id"));
+                        tacoOrder.setDeliveryName(rs.getString("delivery_name"));
+                        tacoOrder.setDeliveryStreet(rs.getString("delivery_street"));
+                        tacoOrder.setDeliveryCity(rs.getString("delivery_city"));
+                        tacoOrder.setDeliveryState(rs.getString("delivery_state"));
+                        tacoOrder.setDeliveryZip(rs.getString("delivery_zip"));
+                        tacoOrder.setCcNumber(rs.getString("cc_number"));
+                        tacoOrder.setCcExpiration(rs.getString("cc_expiration"));
+                        tacoOrder.setCcCVV(rs.getString("cc_cvv"));
+                        tacoOrder.setPlacedAt(new Date(rs.getTimestamp("placed_at").getTime()));
+                        tacoOrder.setTacos(findTacosByOrderId(rs.getLong("id")));
+                        return tacoOrder;
+                    }, id);
+            return Optional.of(order);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    private List<Taco> findTacosByOrderId(Long orderId) {
+        return jdbcOperations.query(
+                "select id, name, created_at from Taco "
+                        + "where taco_order=? order by taco_order_key",
+                (rs, rowNum) -> {
+                    Taco taco = new Taco();
+                    taco.setId(rs.getLong("id"));
+                    taco.setName(rs.getString("name"));
+                    taco.setCreatedAt(new Date(rs.getTimestamp("created_at").getTime()));
+                    taco.setIngredients(findIngredientsByTacoId(rs.getLong("id")));
+                    return taco;
+                }, orderId);
+    }
+
+    private List<IngredientRef> findIngredientsByTacoId(Long tacoId) {
+        return jdbcOperations.query(
+                "select ingredient from Ingredient_Ref "
+                        + "where taco = ? order by taco_key",
+                (rs, rowNum) -> {
+                    return new IngredientRef(rs.getString("ingredient"));
+                }, tacoId);
     }
 }
