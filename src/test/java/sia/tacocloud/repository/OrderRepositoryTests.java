@@ -2,7 +2,7 @@ package sia.tacocloud.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import sia.tacocloud.entity.Ingredient;
 import sia.tacocloud.entity.Ingredient.Type;
@@ -14,7 +14,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@SpringBootTest
+//@SpringBootTest
+@DataJpaTest
 public class OrderRepositoryTests {
 
     @Autowired
@@ -59,7 +60,7 @@ public class OrderRepositoryTests {
         assertThat(fetchedOrder.getCcNumber()).isEqualTo("374245455400126");
         assertThat(fetchedOrder.getCcExpiration()).isEqualTo("05/26");
         assertThat(fetchedOrder.getCcCVV()).isEqualTo("123");
-        assertThat(fetchedOrder.getPlacedAt()).isEqualTo(savedOrder.getPlacedAt());
+        assertThat(fetchedOrder.getPlacedAt().getTime()).isEqualTo(savedOrder.getPlacedAt().getTime());
 
         List<Taco> tacos = fetchedOrder.getTacos();
         assertThat(tacos.size()).isEqualTo(2);

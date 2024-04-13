@@ -11,7 +11,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import sia.tacocloud.entity.Ingredient;
 import sia.tacocloud.entity.Ingredient.Type;
-import sia.tacocloud.entity.IngredientRef;
 import sia.tacocloud.entity.Taco;
 import sia.tacocloud.repository.IngredientRepository;
 import sia.tacocloud.repository.OrderRepository;
@@ -69,9 +68,9 @@ public class DesignTacoControllerTest {
         design = new Taco();
         design.setName("Test Taco");
         design.setIngredients(Arrays.asList(
-                new IngredientRef("FLTO"),
-                new IngredientRef("GRBF"),
-                new IngredientRef("CHED")));
+                new Ingredient("FLTO", "Flour Tortilla", Type.WRAP),
+                new Ingredient("GRBF", "Ground Beef", Type.PROTEIN),
+                new Ingredient("CHED", "Cheddar", Type.CHEESE)));
     }
 
     @Test
