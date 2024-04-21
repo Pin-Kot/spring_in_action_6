@@ -22,3 +22,7 @@ insert into Ingredient (id, name, type)
 values ('SLSA', 'Salsa', 'SAUCE');
 insert into Ingredient (id, name, type)
 values ('SRCR', 'Sour Cream', 'SAUCE');
+
+delete from User;
+insert into User (id, username, password, full_name, street, city, state, zip, phone_number)
+values ('1', 'Nick', '$2a$10$tIEf0DbtR20PP373SI3KVuO0Cu/zA0opHI/0YNIjG562qwhDVIhaW', 'McCormack', 'Ivory', 'Springfield', 'FL', '12345', '7535577');

@@ -12,7 +12,12 @@
 </head>
 
 <body>
-<form method="POST" th:action="@{/orders}" th:object="${tacoOrder}">
+
+<form method="post" th:action="@{/logout}">
+    <input type="submit" value="Logout"/>
+</form>
+
+<form method="POST" th:action="@{/orders}" th:object="${tacoOrder}" id="orderForm">
     <h1>Order your taco creations!</h1>
     <img th:src="@{/images/TacoCloud.png}"/>
     <h3>Your tacos in this order:</h3>

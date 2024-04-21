@@ -4,17 +4,19 @@
 <head>
     <title>Taco Cloud</title>
     <link rel="stylesheet" th:href="@{/styles.css}"/>
-    <style>
-        .error {
-            color: red;
-        }
-    </style>
 </head>
 
 <body>
 <h1>Design your taco!</h1>
+<h2>Feelin' hungry, <span th:text="${user.fullName}">NAME</span>?</h2>
 <img th:src="@{/images/TacoCloud.png}"/>
-<form method="post" th:object="${taco}">
+
+<span th:if="${user != null}">
+    <form method="post" th:action="@{/logout}" id="logoutForm">
+    <input type="submit" value="Logout"/>
+</form>
+
+<form method="post" th:object="${taco}" th:action="@{/design}" id="tacoForm">
     <div class="grid">
         <div class="ingredient-group" id="wraps">
             <h3>Designate your wrap:</h3>

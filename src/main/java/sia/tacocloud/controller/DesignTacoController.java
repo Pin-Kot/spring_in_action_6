@@ -1,5 +1,6 @@
 package sia.tacocloud.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,22 +10,35 @@ import sia.tacocloud.entity.Ingredient;
 import sia.tacocloud.entity.Ingredient.Type;
 import sia.tacocloud.entity.Taco;
 import sia.tacocloud.entity.TacoOrder;
+import sia.tacocloud.entity.User;
 import sia.tacocloud.repository.IngredientRepository;
+import sia.tacocloud.repository.TacoRepository;
+import sia.tacocloud.repository.UserRepository;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Controller
 @RequestMapping("/design")
 @SessionAttributes("tacoOrder")
+@Slf4j
 public class DesignTacoController {
 
     private final IngredientRepository ingredientRepo;
 
+    private final TacoRepository tacoRepo;
+
+    private final UserRepository userRepo;
+
     @Autowired
-    public DesignTacoController(IngredientRepository ingredientRepo) {
+    public DesignTacoController(IngredientRepository ingredientRepo,
+                                TacoRepository tacoRepo,
+                                UserRepository userRepo) {
         this.ingredientRepo = ingredientRepo;
+        this.tacoRepo = tacoRepo;
+        this.userRepo = userRepo;
     }
 
     @ModelAttribute
@@ -47,6 +61,13 @@ public class DesignTacoController {
         return new Taco();
     }
 
+    @ModelAttribute(name = "user")
+    public User user(Principal principal) {
+        String username = principal.getName();
+        User user = userRepo.findByUsername(username);
+        return user;
+    }
+
     @GetMapping
     public String showDesignForm() {
         return "design";
@@ -59,7 +80,9 @@ public class DesignTacoController {
         if (errors.hasErrors()) {
             return "design";
         }
-        tacoOrder.addTaco(taco);
+        Taco saved = tacoRepo.save(taco);
+        tacoOrder.addTaco(saved);
+        log.info("Processing taco: {}", saved);
         return "redirect:/orders/current";
     }
 
